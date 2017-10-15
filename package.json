@@ -1,0 +1,19 @@
+{
+  "name": "rubiks",
+  "version": "0.1.0",
+  "description": "A Rubik's Cube Renderer",
+  "main": "index.js",
+  "author": "Luan Nico",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "watch": "webpack --watch"
+  },
+  "devDependencies": {
+    "webpack": "^3.7.1"
+  },
+  "dependencies": {
+    "three": "^0.87.1",
+    "three-orbit-controls": "^82.1.0"
+  }
+}
