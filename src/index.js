@@ -35,12 +35,20 @@ pointLight2.position.y = -200;
 pointLight2.position.z = -200;
 scene.add(pointLight2);
 
-require('./objects').draw(scene);
+const updateFn = require('./objects').draw(scene);
 
 const container = document.querySelector('#container');
 container.appendChild(renderer.domElement);
 
+const timestamp = () => window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
+
+let last = timestamp();
 const update = () => {
+    const now = timestamp();
+    const dt = now - last;
+    last = now;
+
+    updateFn(dt);
     renderer.render(scene, camera);
     requestAnimationFrame(update);
 }

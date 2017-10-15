@@ -1,6 +1,8 @@
 const THREE = require('three');
 const SIZE = 20;
 
+const CUBES = [];
+
 const createCube = (position, colors) => {
     const geometry = new THREE.BoxGeometry(SIZE, SIZE, SIZE);
     for (let i  = 0; i < geometry.faces.length; i += 2) {
@@ -16,12 +18,13 @@ const createCube = (position, colors) => {
     cube.position.y = position.y;
     cube.position.z = position.z;
 
+    CUBES.push(cube);
     return cube;
 };
 
 const rgb = (r, g, b) => b + 256*g + 256*256*r;
 
-const draw = scene => {
+const drawCube = scene => {
     const cubeDescStr = 'a,a,a,a,a,a,a,a,a;b,b,b,b,b,b,b,b,b;c,c,c,c,c,c,c,c,c;d,d,d,d,d,d,d,d,d;e,e,e,e,e,e,e,e,e;f,f,f,f,f,f,f,f,f';
     const cubeDesc = cubeDescStr.split(';').map(s => s.split(','));
     const colors = {
@@ -74,6 +77,20 @@ const draw = scene => {
     scene.add(createCube({ x: -d, y: -d, z: -d }, { 5: color(6, 7), 1: color(3, 7), 3: color(5, 7) }));
     scene.add(createCube({ x: 0, y: -d, z: -d }, { 5: color(6, 8), 3: color(5, 8) }));
     scene.add(createCube({ x: d, y: -d, z: -d }, { 5: color(6, 9), 0: color(4, 9), 3: color(5, 9) }));
+};
+
+let rotation = 0;
+const draw = scene => {
+    drawCube(scene);
+    return dt => {
+        const pivot = new THREE.Group();
+        scene.add(pivot);
+        for (let i = 0; i < 9; i++) {
+            pivot.add(CUBES[i]);
+        }
+        rotation += 0.001 * dt;
+        pivot.rotation.z = rotation;
+    };
 };
 
 module.exports = { draw };
