@@ -1,3 +1,6 @@
+const url = require('url');
+const flatMap = require('flatmap');
+const QUERY = url.parse(document.location.href, true).query;
 const THREE = require('three');
 const SIZE = 20;
 
@@ -24,8 +27,16 @@ const createCube = (position, colors) => {
 
 const rgb = (r, g, b) => b + 256*g + 256*256*r;
 
+const fetchCubeDescStr = () => {
+    return QUERY['cubeDesc'] || 'a,a,a,a,a,a,a,a,a;b,b,b,b,b,b,b,b,b;c,c,c,c,c,c,c,c,c;d,d,d,d,d,d,d,d,d;e,e,e,e,e,e,e,e,e;f,f,f,f,f,f,f,f,f';
+};
+
+const fetchMovementStr = () => {
+    return QUERY['movements'] || "LF'L''F'";
+};
+
 const drawCube = scene => {
-    const cubeDescStr = 'a,a,a,a,a,a,a,a,a;b,b,b,b,b,b,b,b,b;c,c,c,c,c,c,c,c,c;d,d,d,d,d,d,d,d,d;e,e,e,e,e,e,e,e,e;f,f,f,f,f,f,f,f,f';
+    const cubeDescStr = fetchCubeDescStr();
     const cubeDesc = cubeDescStr.split(';').map(s => s.split(','));
     const colors = {
         a: rgb(238, 111, 18),
@@ -79,7 +90,13 @@ const drawCube = scene => {
     scene.add(createCube({ x: d, y: -d, z: -d }, { 5: color(6, 9), 0: color(4, 9), 3: color(5, 9) }));
 };
 
-const rotations = [ 'F', 'L', 'F\'', 'L\'' ];
+const rotations = flatMap(fetchMovementStr().split(/([A-Z]\'{0,2})/).filter(e => e.length > 0), el => {
+    if (el.length === 3) {
+        return [el[0] + '\'', el[0] + '\''];
+    }
+    return el;
+});
+
 let rotation = 0, currentRotation;
 let pivot;
 
