@@ -84,11 +84,15 @@ let rotation = 0, currentRotation;
 let pivot;
 
 // [ [from, to], ... ]
-const swap = (...changes) => {
+const swap = (changes) => {
     const froms = {};
     changes.map(v => v[1]).forEach(from => froms[from] = CUBES[from]);
     changes.forEach(pair => CUBES[pair[0]] = froms[pair[1]]);
 };
+
+const MAP = {
+    'R': [[0, 6], [1, 3], [2, 0], [3, 7], [4, 4], [5, 1], [6, 8], [7, 5], [8, 2]]
+}
 
 const draw = scene => {
     drawCube(scene);
@@ -100,9 +104,7 @@ const draw = scene => {
             currentRotation = rotations.shift();
             pivot = new THREE.Group();
             if (currentRotation === 'R') {
-                for (let i = 0; i < 9; i++) {
-                    pivot.add(CUBES[i]);
-                }
+                MAP[currentRotation].map(v => v[1]).forEach(i => pivot.add(CUBES[i]));
             } else {
                 for (let i = 0; i < 27; i += 3) {
                     pivot.add(CUBES[i]);
@@ -120,8 +122,7 @@ const draw = scene => {
             pivot.children.slice().forEach(child => THREE.SceneUtils.detach(child, pivot, scene));
             scene.remove(pivot);
             if (currentRotation === 'R') {
-                //swap([1, 7], [2, 4], [3, 1], [4, 8], [5, 5], [6, 2], [7, 9], [8, 6], [9, 3]);
-                swap([0, 6], [1, 3], [2, 0], [3, 7], [4, 4], [5, 1], [6, 8], [7, 5], [8, 2]);
+                swap(MAP[currentRotation]);
             } else {
             }
             rotation = 0;
